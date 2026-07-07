@@ -212,22 +212,6 @@ export function DeveloperInfo() {
           </div>
         </div>
       </Card>
-
-      <Card>
-        <div className="flex items-start gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400">
-            <BeakerIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-surface-900 dark:text-white">
-              Next.js Dev Tools
-            </p>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-              Next.js Dev Tools adalah perkakas khusus (spesialis) yang paham betul bagaimana &ldquo;mesin&rdquo; Next.js bekerja di latar belakang. Alat ini menghemat waktu Anda agar tidak perlu terus-menerus melakukan console.log di terminal server maupun konsol browser.
-            </p>
-          </div>
-        </div>
-      </Card>
     </div>
   )
 }

@@ -51,7 +51,7 @@ export const CURRENCY_CODES = Object.keys(CURRENCIES)
 
 export const POPULAR_CURRENCIES = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "SGD", "IDR", "CNY", "KRW"]
 
-export const API_BASE = "https://api.frankfurter.dev"
+export const API_BASE = "https://api.frankfurter.dev/v1"
 
 export const APP_NAME = "KonversiUang"
 export const APP_DESC = "Aplikasi konversi mata uang dunia dengan kurs real-time"
