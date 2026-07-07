@@ -1,65 +1,121 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useConverter } from "@/hooks/useConverter"
+import { ConverterForm } from "@/components/converter/ConverterForm"
+import { ResultCard } from "@/components/converter/ResultCard"
+import { RateTable } from "@/components/converter/RateTable"
+import { HistoryPanel } from "@/components/converter/HistoryPanel"
+import { FavoritesPanel } from "@/components/converter/FavoritesPanel"
+import { StatCard } from "@/components/ui/StatCard"
+import {
+  CurrencyDollarIcon,
+  ArrowPathIcon,
+  StarIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline"
+import { useCallback } from "react"
+
+export default function HomePage() {
+  const {
+    dari, ke, jumlah, hasil, kurs, inverse, loading, error,
+    waktuUpdate, totalKonversi, history, favorites,
+    setDari, setKe, setJumlah, doConvert, swapCurrencies,
+    addFavorite, removeFavorite, loadFavorite, reset, clearHistory,
+  } = useConverter()
+
+  const isFavorite = favorites.some(([a, b]) => a === dari && b === ke)
+
+  const handleConvert = useCallback(() => {
+    doConvert()
+  }, [doConvert])
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto max-w-5xl space-y-6 p-4 pb-8 sm:p-6 lg:p-8">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold text-surface-900 dark:text-white sm:text-3xl">
+          Konversi Mata Uang
+        </h1>
+        <p className="text-sm text-surface-500 dark:text-surface-400">
+          Konversi nilai mata uang dunia dengan kurs real-time
+        </p>
+      </div>
+
+      {error && (
+        <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+          {error}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      )}
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <ConverterForm
+            dari={dari}
+            ke={ke}
+            jumlah={jumlah}
+            loading={loading}
+            onDariChange={setDari}
+            onKeChange={setKe}
+            onJumlahChange={setJumlah}
+            onConvert={handleConvert}
+            onSwap={swapCurrencies}
+            onAddFavorite={addFavorite}
+            isFavorite={isFavorite}
+          />
+
+          {hasil !== null && kurs !== null && inverse !== null && waktuUpdate && (
+            <ResultCard
+              dari={dari}
+              ke={ke}
+              jumlah={jumlah}
+              hasil={hasil}
+              kurs={kurs}
+              inverse={inverse}
+              waktuUpdate={waktuUpdate}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          )}
+
+          <RateTable base={dari} />
+
+          <HistoryPanel history={history} onClear={clearHistory} />
         </div>
-      </main>
+
+        <div className="space-y-6">
+          <StatCard
+            label="Total Konversi"
+            value={totalKonversi}
+            icon={<CurrencyDollarIcon className="h-6 w-6" />}
+            color="primary"
+          />
+
+          <StatCard
+            label="Total Favorit"
+            value={favorites.length}
+            icon={<StarIcon className="h-6 w-6" />}
+            color="warning"
+          />
+
+          <StatCard
+            label="Riwayat"
+            value={history.length}
+            icon={<ClockIcon className="h-6 w-6" />}
+            color="info"
+          />
+
+          <FavoritesPanel
+            favorites={favorites}
+            onLoad={loadFavorite}
+            onRemove={removeFavorite}
+          />
+
+          <button
+            onClick={reset}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-sm font-medium text-surface-600 hover:bg-surface-50 dark:border-surface-700 dark:bg-surface-800 dark:text-surface-300 dark:hover:bg-surface-700 transition-all"
+          >
+            <ArrowPathIcon className="h-4 w-4" />
+            Reset Aplikasi
+          </button>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
